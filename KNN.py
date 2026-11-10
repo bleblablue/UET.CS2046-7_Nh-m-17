@@ -29,3 +29,7 @@ X_imputed=scaler.inverse_transform(X_imputed)
 #cập nhật dữ liệu
 data[x.columns]=X_imputed
 
+# Xuất dữ liệu ra file CSV mới
+output_path = r"C:\Users\Admin\OneDrive\Documents\baiAI\UET.CS2046-7_Nh-m-17\du_lieu_tien_xu_ly.csv"
+data.to_csv(output_path, index=False)
+print("done")

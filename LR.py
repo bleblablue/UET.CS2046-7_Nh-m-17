@@ -27,7 +27,7 @@ print("training successfully")
 #dự đoán
 y_pred=model.predict(x_test)
 #đánh giá mô hình
-print("\n   KET QUA MO HINH LR")
+print("KET QUA MO HINH LR")
 print("Accuracy:", accuracy_score(y_test, y_pred))
 print("Precision:", precision_score(y_test, y_pred))
 print("Recall:", recall_score(y_test, y_pred))

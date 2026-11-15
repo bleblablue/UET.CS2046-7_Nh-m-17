@@ -1,7 +1,7 @@
 from pathlib import Path
 
 import pandas as pd
-import tensorflow as tf
+import tensorflow as tf  # Thư viện xây dựng mạng nơ-ron
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import (
     accuracy_score,
@@ -17,7 +17,7 @@ thu_muc = Path(__file__).resolve().parent
 train_data = pd.read_csv(thu_muc/ "train.csv")
 test_data = pd.read_csv(thu_muc / "test.csv")
 
-# Tách thuộc tính và nhãn giống SVM
+# Tách thuộc tính đầu vào và nhãn đầu ra
 x_train = train_data.drop(columns = ["Outcome"])
 y_train = train_data["Outcome"]
 
@@ -25,11 +25,13 @@ y_train = train_data["Outcome"]
 x_test = test_data[x_train.columns]
 y_test = test_data["Outcome"]
 
+# Chuẩn hóa dữ liệu đầu vào
 scaler = StandardScaler()
-x_train = scaler.fit_transform(x_train).astype("float32")
+x_train = scaler.fit_transform(x_train).astype("float32") # Tính trung bình và độ lệch chuẩn cho từng cột trên tập train
 x_test = scaler.transform(x_test).astype("float32")
 
-tf.keras.utils.set_random_seed(42)
+# Khai báo đầu vào và xây dựng AMNN
+tf.keras.utils.set_random_seed(42) # .keras dùng để xây dựng và huấn luyện mạng nơ-ron 
 layers = tf.keras.layers
 
 dau_vao = tf.keras.Input(shape = (x_train.shape[1],), name = "dau_vao")
@@ -45,14 +47,17 @@ ket_hop = layers.Add(name = "ket_hop")([nhanh_cong, nhanh_nhan])
 lop_an = layers.Dense(8, activation = "relu", name = "lop_an")(ket_hop)
 dau_ra = layers.Dense(1, activation = "sigmoid", name = "xac_suat")(lop_an)
 
+# Tạo và huấn luyện mô hình
 model = tf.keras.Model(inputs = dau_vao, outputs = dau_ra, name = "AMNN")
+
+# Thiết lập cách huấn luyện
 model.compile(optimizer = "adam", loss = "binary_crossentropy")
 
 # Huấn luyên trên train.csv
 model.fit(x_train, y_train, epochs = 100, batch_size = 32, verbose = 2)
 
-# Dự đpams trêm test.csv
-y_prob = model.predict(x_test, verbose = 0).ravel()
+# Dự đoán trên test.csv
+y_prob = model.predict(x_test, verbose = 0).ravel() # yêu cầu mô hình đã học đưa ra dự đoán
 y_pred = (y_prob >= 0.5).astype(int)
 
 print("\n KẾT QUẢ MÔ HÌNH AMNN")
